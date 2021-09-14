@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
 import org.junit.*;
@@ -5,7 +7,13 @@ import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class First {
     private WebDriver driver;
@@ -27,7 +35,8 @@ public class First {
     }
 
     @Test
-    public void testUntitledTestCase() throws Exception {
+    public void testConfirmed() throws Exception {
+
         driver.get(baseUrl);
         WebElement InputCardNumber = driver.findElement(By.id("input-card-number"));
         WebElement InputCardHolder = driver.findElement(By.id("input-card-holder"));
@@ -47,6 +56,131 @@ public class First {
         driver.findElement(By.id("success")).click();
 
         assertEquals("Confirmed", driver.findElement(By.xpath("//*[@id=\"payment-item-status\"]/div[2]")).getText());
+        assertEquals(orderNumber, driver.findElement(By.xpath("//*[@id=\"payment-item-ordernumber\"]/div[2]")).getText());
+        assertEquals(totalAmount, driver.findElement(By.xpath("//*[@id=\"payment-item-total-amount\"]")).getText());
+        // assertEquals(currency, driver.findElement(By.xpath("//*[@id=\"payment-item-total\"]/div[2]")));
+    }
+
+    @Test
+    public void testDeclined() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardNumber = driver.findElement(By.id("input-card-number"));
+        WebElement InputCardHolder = driver.findElement(By.id("input-card-holder"));
+        Select cardExpiresMounth = new Select(driver.findElement(By.id("card-expires-month")));
+        Select cardExpiresYear = new Select(driver.findElement(By.id("card-expires-year")));
+        WebElement InputCardCvc = driver.findElement(By.id("input-card-cvc"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardNumber.sendKeys("5555555555554444");
+        InputCardHolder.sendKeys("YOBA FETTT");
+        cardExpiresMounth.selectByIndex(8);
+        cardExpiresYear.selectByValue("2025");
+        InputCardCvc.sendKeys("777");
+
+        ActionSubmit.click();
+        driver.findElement(By.id("success")).click();
+
+        assertEquals("Declined by issuing bank", driver.findElement(By.xpath("//*[@id=\"payment-item-status\"]/div[2]")).getText());
+        assertEquals(orderNumber, driver.findElement(By.xpath("//*[@id=\"payment-item-ordernumber\"]/div[2]")).getText());
+        assertEquals(totalAmount, driver.findElement(By.xpath("//*[@id=\"payment-item-total-amount\"]")).getText());
+        // assertEquals(currency, driver.findElement(By.xpath("//*[@id=\"payment-item-total\"]/div[2]")));
+    }
+
+    @Test
+    public void testAuth() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardNumber = driver.findElement(By.id("input-card-number"));
+        WebElement InputCardHolder = driver.findElement(By.id("input-card-holder"));
+        Select cardExpiresMounth = new Select(driver.findElement(By.id("card-expires-month")));
+        Select cardExpiresYear = new Select(driver.findElement(By.id("card-expires-year")));
+        WebElement InputCardCvc = driver.findElement(By.id("input-card-cvc"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardNumber.sendKeys("4000000000000044");
+        InputCardHolder.sendKeys("YOBA FETTT");
+        cardExpiresMounth.selectByIndex(2);
+        cardExpiresYear.selectByValue("2025");
+        InputCardCvc.sendKeys("141");
+
+        ActionSubmit.click();
+        driver.findElement(By.id("success")).click();
+
+        assertEquals("CONFIRMED", driver.findElement(By.xpath("//*[@id=\"payment-item-status\"]/div[2]")).getText());
+        assertEquals(orderNumber, driver.findElement(By.xpath("//*[@id=\"payment-item-ordernumber\"]/div[2]")).getText());
+        assertEquals(totalAmount, driver.findElement(By.xpath("//*[@id=\"payment-item-total-amount\"]")).getText());
+        // assertEquals(currency, driver.findElement(By.xpath("//*[@id=\"payment-item-total\"]/div[2]")));
+    }
+
+    @Test
+    public void test3d() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardNumber = driver.findElement(By.id("input-card-number"));
+        WebElement InputCardHolder = driver.findElement(By.id("input-card-holder"));
+        Select cardExpiresMounth = new Select(driver.findElement(By.id("card-expires-month")));
+        Select cardExpiresYear = new Select(driver.findElement(By.id("card-expires-year")));
+        WebElement InputCardCvc = driver.findElement(By.id("input-card-cvc"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardNumber.sendKeys("4000000000000036");
+        InputCardHolder.sendKeys("YOBA FETTT");
+        cardExpiresMounth.selectByIndex(2);
+        cardExpiresYear.selectByValue("2025");
+        InputCardCvc.sendKeys("123");
+
+        ActionSubmit.click();
+
+        assertEquals("Confirmed", driver.findElement(By.xpath("//*[@id=\"payment-item-status\"]/div[2]")).getText());
+        assertEquals(orderNumber, driver.findElement(By.xpath("//*[@id=\"payment-item-ordernumber\"]/div[2]")).getText());
+        assertEquals(totalAmount, driver.findElement(By.xpath("//*[@id=\"payment-item-total-amount\"]")).getText());
+        // assertEquals(currency, driver.findElement(By.xpath("//*[@id=\"payment-item-total\"]/div[2]")));
+    }
+
+    @Test
+    public void testNo3d() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardNumber = driver.findElement(By.id("input-card-number"));
+        WebElement InputCardHolder = driver.findElement(By.id("input-card-holder"));
+        Select cardExpiresMounth = new Select(driver.findElement(By.id("card-expires-month")));
+        Select cardExpiresYear = new Select(driver.findElement(By.id("card-expires-year")));
+        WebElement InputCardCvc = driver.findElement(By.id("input-card-cvc"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardNumber.sendKeys("4000000000000077");
+        InputCardHolder.sendKeys("YOBA FETTT");
+        cardExpiresMounth.selectByIndex(2);
+        cardExpiresYear.selectByValue("2025");
+        InputCardCvc.sendKeys("123");
+
+        ActionSubmit.click();
+
+        assertEquals("Confirmed", driver.findElement(By.xpath("//*[@id=\"payment-item-status\"]/div[2]")).getText());
+        assertEquals(orderNumber, driver.findElement(By.xpath("//*[@id=\"payment-item-ordernumber\"]/div[2]")).getText());
+        assertEquals(totalAmount, driver.findElement(By.xpath("//*[@id=\"payment-item-total-amount\"]")).getText());
+        // assertEquals(currency, driver.findElement(By.xpath("//*[@id=\"payment-item-total\"]/div[2]")));
+    }
+
+
+    @Test
+    public void testScreenShot() throws IOException
+    {
+        driver.get(baseUrl);
+
+        WebElement Cvc = driver.findElement(By.id("cvc-hint-toggle"));
+
+        Actions action = new Actions(driver);
+        action.moveToElement(Cvc).perform();
+
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
+        ImageIO.write(screenshot.getImage(), "png", new File("src\\test\\sc.png"));
+
     }
 
     @After
