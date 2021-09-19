@@ -1,0 +1,16 @@
+SELECT * FROM Customers WHERE Country='Germany';
+
+SELECT * FROM Customers WHERE CustomerName LIKE '%e';
+
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES ('IvanS', 'Ivan Sokolovskii', 'Somestreet', 'NSK', '630000', 'Russia');
+
+SELECT * FROM Customers WHERE Country='Russia';
+
+UPDATE Customers SET ContactName = 'YobaFettt', City= 'Butthurt' WHERE CustomerID = 92;
+
+SELECT * FROM Customers WHERE Country='Russia';
+
+DELETE FROM Customers WHERE City='Nantes';
+
+SELECT Orders.OrderID FROM Orders INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID AND Customers.ContactName = 'Steven';
