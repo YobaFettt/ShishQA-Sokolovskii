@@ -15,7 +15,7 @@ import ru.yandex.qatools.ashot.Screenshot;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class First {
+public class PaymentTest {
     private WebDriver driver;
     private String baseUrl;
     private String orderNumber;
@@ -167,6 +167,75 @@ public class First {
         // assertEquals(currency, driver.findElement(By.xpath("//*[@id=\"payment-item-total\"]/div[2]")));
     }
 
+    @Test
+    public void ErrorNumber() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardNumber = driver.findElement(By.id("input-card-number"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardNumber.sendKeys("0000000000001111");
+        ActionSubmit.click();
+
+        assertEquals("Card number is not valid", driver.findElement(By.xpath("//*[@id=\"card-number-field\"]/div/label")).getText());
+
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
+        ImageIO.write(screenshot.getImage(), "png", new File("src\\test\\err_numb.png"));
+    }
+
+    @Test
+    public void ErrorHolder() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardHolder = driver.findElement(By.id("input-card-holder"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardHolder.sendKeys("Имя кирилицей");
+        ActionSubmit.click();
+
+        assertEquals("Cardholder name is not valid", driver.findElement(By.xpath("//*[@id=\"card-holder-field\"]/div/label")).getText());
+
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
+        ImageIO.write(screenshot.getImage(), "png", new File("src\\test\\err_hold.png"));
+    }
+
+    @Test
+    public void ErrorDate() throws Exception {
+
+        driver.get(baseUrl);
+        Select cardExpiresMounth = new Select(driver.findElement(By.id("card-expires-month")));
+        Select cardExpiresYear = new Select(driver.findElement(By.id("card-expires-year")));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        cardExpiresMounth.selectByIndex(1);
+        cardExpiresYear.selectByValue("2021");
+        ActionSubmit.click();
+
+        assertEquals("Invalid date", driver.findElement(By.xpath("//*[@id=\"card-expires-field\"]/div/label")).getText());
+
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
+        ImageIO.write(screenshot.getImage(), "png", new File("src\\test\\err_date.png"));
+    }
+
+    @Test
+    public void ErrorCVC() throws Exception {
+
+        driver.get(baseUrl);
+        WebElement InputCardCvc = driver.findElement(By.id("input-card-cvc"));
+        WebElement ActionSubmit = driver.findElement(By.id("action-submit"));
+        WebElement ActionCancel = driver.findElement(By.id("action-cancel"));
+
+        InputCardCvc.sendKeys("12");
+        ActionSubmit.click();
+
+        assertEquals("CVV2/CVC2/CAV2 is not valid", driver.findElement(By.xpath("//*[@id=\"card-cvc-field\"]/div/label")).getText());
+
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
+        ImageIO.write(screenshot.getImage(), "png", new File("src\\test\\err_cvc.png"));
+    }
 
     @Test
     public void testScreenShot() throws IOException
