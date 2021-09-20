@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Practice-3" />
+        <module name="ShishQA-Sokolovskii" />
       </profile>
     </annotationProcessing>
   </component>
